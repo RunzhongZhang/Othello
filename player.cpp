@@ -1,5 +1,16 @@
 #include "player.h"
 
+// Create a static heuristic value table
+static int heuristic_value[64] = 
+	{ 500,-150,30,10,10,30,-150, 500,
+	 -150,-250, 0, 0, 0, 0,-250,-150,
+	   30,   0, 1, 2, 2, 1,   0,  30,
+	   10,   0, 2,16,16, 2,   0,  10,
+	   10,   0, 2,16,16, 2,   0,  10,
+	   30,   0, 1, 2, 2, 1,   0,  30,
+	 -150,-250, 0, 0, 0, 0,-250,-150,
+	  500,-150,30,10,10,30,-150, 500};
+
 /*
  * Constructor for the player; initialize everything here. The side your AI is
  * on (BLACK or WHITE) is passed in as "side". The constructor must finish 
@@ -58,8 +69,8 @@ Move *Player::doMove(Move *opponentsMove, int msLeft) {
 		return NULL;
 	}
 	
-	// Return the move with the highest score
-	int score_max = -65;
+	// Return the move with the highest heuristic value
+	int score_max = -1000;
 	int score;
 	Move * best_move = NULL;
 	for (int i = 0; i < 8; i++) {
@@ -67,7 +78,7 @@ Move *Player::doMove(Move *opponentsMove, int msLeft) {
             Move * move = new Move(i, j);
             if (board->checkMove(move, player_side)) 
             {
-				score = board->getscore(move, player_side);
+				score = heuristic_value[8 * i + j];
 				if (score > score_max)
 				{
 					if (best_move != NULL)	delete best_move;
@@ -81,7 +92,7 @@ Move *Player::doMove(Move *opponentsMove, int msLeft) {
 			}
         }
     }
-    board->doMove(best_move, player_side);
+    board->doMove(best_move, player_side); //update the board
 	return best_move;
     
 	return NULL;
