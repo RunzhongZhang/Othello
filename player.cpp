@@ -58,17 +58,31 @@ Move *Player::doMove(Move *opponentsMove, int msLeft) {
 		return NULL;
 	}
 	
-	// Return the first valid move
+	// Return the move with the highest score
+	int score_max = -65;
+	int score;
+	Move * best_move = NULL;
 	for (int i = 0; i < 8; i++) {
         for (int j = 0; j < 8; j++) {
-            Move * random_move = new Move(i, j);
-            if (board->checkMove(random_move, player_side)) 
+            Move * move = new Move(i, j);
+            if (board->checkMove(move, player_side)) 
             {
-				board->doMove(random_move, player_side);
-				return random_move;
+				score = board->getscore(move, player_side);
+				if (score > score_max)
+				{
+					if (best_move != NULL)	delete best_move;
+					best_move = move;
+					score_max = score;
+				}
+				else
+				{
+					delete move;
+				}
 			}
         }
     }
+    board->doMove(best_move, player_side);
+	return best_move;
     
 	return NULL;
 	

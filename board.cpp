@@ -178,3 +178,22 @@ void Board::setBoard(char data[]) {
         }
     }
 }
+
+/*
+ * Simple Version: get the score if one move is made. 
+ * score = (# stones you have) - (# stones your opponent has)
+ */
+int Board::getscore(Move *m, Side side)
+{
+	Board * newboard = this->copy();
+	newboard->doMove(m, side);
+	if (side == BLACK)
+	{
+		return newboard->countBlack() - newboard->countWhite();
+	}
+	else
+	{
+		return newboard->countWhite() - newboard->countBlack();
+	}
+}
+
