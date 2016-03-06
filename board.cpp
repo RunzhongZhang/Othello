@@ -166,6 +166,55 @@ void Board::doMove(Move *m, Side side) {
 }
 
 /**
+If the move is legal, returns a new Board where the move has been made. 
+The returned Board is dynamically allocated; please free with delete.
+If the move is NOT legal, returns NULL.
+*/
+Board *Board::doMoveIfLegal(Move *m, Side side) {
+    int X = m->getX();
+    int Y = m->getY();
+
+    // Make sure the square hasn't already been taken.
+    if (occupied(X, Y)) return NULL;
+    
+    Board *newBoard = NULL;
+
+    Side other = (side == BLACK) ? WHITE : BLACK;
+    for (int dx = -1; dx <= 1; dx++) {
+        for (int dy = -1; dy <= 1; dy++) {
+            if (dy == 0 && dx == 0) continue;
+
+            // Is there a capture in that direction?
+            int x = X + dx;
+            int y = Y + dy;
+            if (onBoard(x, y) && get(other, x, y)) {
+                do {
+                    x += dx;
+                    y += dy;
+                } while (onBoard(x, y) && get(other, x, y));
+
+                if (onBoard(x, y) && get(side, x, y)) {
+                    /*
+                    All pieces between (x, y), and (m.x, m.y) are flipped.
+                    */
+                    if (newBoard == NULL) {
+                        // Initialize newBoard if it hasn't been yet.
+                        newBoard = this->copy();
+                    }
+                    for (int i = X + dx, j = Y + dy; 
+                         i != x; 
+                         i += dx, j += dy) {
+                        newBoard->flip(i, j);
+                    } 
+                }
+            }
+        }
+    }
+    
+    return newBoard;
+}
+
+/**
 Calculates the score, if You are on the specified side. 
 (Squares occupied by the same side as "side" contribute positively; 
 those occupied by the opposite side contribute negatively.)
