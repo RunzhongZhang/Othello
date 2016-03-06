@@ -1,18 +1,7 @@
 #include "player.h"
 #include <vector>
-
-/*
-// Create a static heuristic value table
-static int heuristic_value[64] = 
-	{ 500,-150,30,10,10,30,-150, 500,
-	 -150,-250, 0, 0, 0, 0,-250,-150,
-	   30,   0, 1, 2, 2, 1,   0,  30,
-	   10,   0, 2,16,16, 2,   0,  10,
-	   10,   0, 2,16,16, 2,   0,  10,
-	   30,   0, 1, 2, 2, 1,   0,  30,
-	 -150,-250, 0, 0, 0, 0,-250,-150,
-	  500,-150,30,10,10,30,-150, 500};
-*/
+#include <stdlib.h>
+#include <limits.h>
 
 /*
  * Constructor for the player; initialize everything here. The side your AI is
@@ -66,7 +55,7 @@ Move *Player::doMove(Move *opponentsMove, int msLeft) {
 	
 	// Update the board
 	board->doMove(opponentsMove, opponent_side);
-	//board->printboard();
+	board->printboard();
 	//cerr << "here1";
 	
 	// If there is not valid move, return NULL
@@ -93,14 +82,15 @@ Move *Player::doMove(Move *opponentsMove, int msLeft) {
     }
     
     // Get the minimax move with 2 level depth
-    int score_max = -1000;
-    int score_min = 1000;
+
+    int score_min = 1 << 30;
+    int score_max = 1 << 31;
 	int score;
 	Move * best_move = NULL;
     Board *board2 = board->copy();
     for (unsigned int i = 0; i < valid_move.size(); i++) {
         board2->doMove(valid_move[i], player_side);
-        score_min = 1000;
+        score_min = 1 << 30;
         for (int j = 0; j < 8; j++) {
 			for (int k = 0; k < 8; k++) {
 				Move * move2 = new Move(j, k);
@@ -108,7 +98,7 @@ Move *Player::doMove(Move *opponentsMove, int msLeft) {
 				{
 					Board *board3 = board2->copy();
 					board3->doMove(move2, opponent_side);
-					score = -board3->getscore(move2, opponent_side);
+					score = board3->score(player_side);
 					if (score < score_min)
 					{
 						score_min = score;
@@ -128,7 +118,7 @@ Move *Player::doMove(Move *opponentsMove, int msLeft) {
     }
     
     board->doMove(best_move, player_side); //update the board
-	//board->printboard();
+	board->printboard();
 	//cerr << "here2";
 	return best_move;
 }

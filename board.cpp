@@ -24,16 +24,14 @@ Board::~Board() {
 Heuristic values for each square in the board.
 */
 const int Board::heuristic_values[64] = 	
-    { 500,-150,30,10,10,30,-150, 500,
-	 -150,-250, 0, 0, 0, 0,-250,-150,
-	   30,   0, 1, 2, 2, 1,   0,  30,
-	   10,   0, 2,16,16, 2,   0,  10,
-	   10,   0, 2,16,16, 2,   0,  10,
-	   30,   0, 1, 2, 2, 1,   0,  30,
-	 -150,-250, 0, 0, 0, 0,-250,-150,
-	  500,-150,30,10,10,30,-150, 500};
-
-
+    {50000,-1500,300,100,100,300,-150, 50000,
+	 -1500,-2500, 0, 0, 0, 0,-2500,-1500,
+	   300,   0, 50, 20, 20, 50,   0,  300,
+	   100,   0, 20,16,16, 20,   0,  100,
+	   100,   0, 20,16,16, 20,   0,  100,
+	   300,   0, 50, 20, 20, 50,   0,  300,
+	 -1500,-2500, 0, 0, 0, 0,-2500,-1500,
+	  50000,-1500,300,100,100,300,-1500, 50000};
 
 /*
  * Returns a copy of this board.
@@ -217,21 +215,6 @@ void Board::setBoard(char data[]) {
             taken.set(i);
         }
     }
-}
-
-
-int Board::getscore(Move *m, Side side)
-{
-	Board * newboard = this->copy();
-	newboard->doMove(m, side);
-	if (side == BLACK)
-	{
-		return newboard->countBlack() - newboard->countWhite();
-	}
-	else
-	{
-		return newboard->countWhite() - newboard->countBlack();
-	}
 }
 
 /*
