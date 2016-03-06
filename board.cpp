@@ -58,6 +58,15 @@ void Board::set(Side side, int x, int y) {
     black.set(x + 8*y, side == BLACK);
 }
 
+/**
+Flip a single piece at the specified position. Assumes the position is
+occupied; i.e. there is something to flip there.
+*/
+void Board::flip(int x, int y) {
+    black.flip(x + 8*y);
+}
+
+
 bool Board::onBoard(int x, int y) {
     return(0 <= x && x < 8 && 0 <= y && y < 8);
 }
