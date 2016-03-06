@@ -18,6 +18,21 @@ Board::Board() {
 Board::~Board() {
 }
 
+/**
+Heuristic values for each square in the board.
+*/
+const int Board::heuristic_values[64] = 	
+    { 500,-150,30,10,10,30,-150, 500,
+	 -150,-250, 0, 0, 0, 0,-250,-150,
+	   30,   0, 1, 2, 2, 1,   0,  30,
+	   10,   0, 2,16,16, 2,   0,  10,
+	   10,   0, 2,16,16, 2,   0,  10,
+	   30,   0, 1, 2, 2, 1,   0,  30,
+	 -150,-250, 0, 0, 0, 0,-250,-150,
+	  500,-150,30,10,10,30,-150, 500};
+
+
+
 /*
  * Returns a copy of this board.
  */
@@ -139,6 +154,29 @@ void Board::doMove(Move *m, Side side) {
         }
     }
     set(side, X, Y);
+}
+
+/**
+Calculates the score, if You are on the specified side. 
+(Squares occupied by the same side as "side" contribute positively; 
+those occupied by the opposite side contribute negatively.)
+*/
+int Board::score(Side yourSide) {
+    int output;
+    for (int i = 0; i < 64; i++) {
+        if (taken[i]) {
+            if (black[i] == (yourSide == BLACK)) {
+                /*
+                if it's occupied by black and you are BLACK or
+                if it's occupied by white and you are WHITE
+                */
+                output += heuristic_values[i];
+            } else {
+                output -= heuristic_values[i];
+            }
+        }
+    }
+    return output;
 }
 
 /*
