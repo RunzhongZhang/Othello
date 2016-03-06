@@ -1,4 +1,6 @@
 #include "board.h"
+#include <iostream>
+using namespace std;
 
 /*
  * Make a standard 8x8 othello board and initialize it to the standard setup.
@@ -180,4 +182,45 @@ void Board::setBoard(char data[]) {
 }
 
 
+int Board::getscore(Move *m, Side side)
+{
+	Board * newboard = this->copy();
+	newboard->doMove(m, side);
+	if (side == BLACK)
+	{
+		return newboard->countBlack() - newboard->countWhite();
+	}
+	else
+	{
+		return newboard->countWhite() - newboard->countBlack();
+	}
+}
+
+/*
+ * Print the whole board
+ * Blank-0
+ * BLACK-B
+ * WHITE-W
+ */
+void Board::printboard()
+{
+	for (int j = 0; j < 8; j++) {
+        for (int i = 0; i < 8; i++) {
+            if (!this->occupied(i, j)) 
+            {
+				cerr << "0 ";
+			}
+			else if (this->get(WHITE, i, j))
+			{
+				cerr << "W ";
+			}
+			else if (this->get(BLACK, i, j))
+			{
+				cerr << "B ";
+			}
+        }
+        cerr << endl;
+    }
+    cerr << endl;
+}
 

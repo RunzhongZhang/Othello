@@ -1,5 +1,7 @@
 #include "player.h"
+#include <vector>
 
+/*
 // Create a static heuristic value table
 static int heuristic_value[64] = 
 	{ 500,-150,30,10,10,30,-150, 500,
@@ -10,6 +12,7 @@ static int heuristic_value[64] =
 	   30,   0, 1, 2, 2, 1,   0,  30,
 	 -150,-250, 0, 0, 0, 0,-250,-150,
 	  500,-150,30,10,10,30,-150, 500};
+*/
 
 /*
  * Constructor for the player; initialize everything here. The side your AI is
@@ -63,39 +66,69 @@ Move *Player::doMove(Move *opponentsMove, int msLeft) {
 	
 	// Update the board
 	board->doMove(opponentsMove, opponent_side);
+	//board->printboard();
+	//cerr << "here1";
 	
 	// If there is not valid move, return NULL
     if (board->hasMoves(player_side) == false){
 		return NULL;
 	}
 	
-	// Return the move with the highest heuristic value
-	int score_max = -1000;
-	int score;
-	Move * best_move = NULL;
+	// Create a valid_move vector to store all the valid moves of the player
+	vector<Move*> valid_move;
+
+	// Find all the valid moves and store them in the vector valid_move
 	for (int i = 0; i < 8; i++) {
         for (int j = 0; j < 8; j++) {
             Move * move = new Move(i, j);
             if (board->checkMove(move, player_side)) 
             {
-				score = heuristic_value[8 * i + j];
-				if (score > score_max)
-				{
-					if (best_move != NULL)	delete best_move;
-					best_move = move;
-					score_max = score;
-				}
-				else
-				{
-					delete move;
-				}
+				valid_move.push_back(move);
+			}
+			else
+			{
+				delete move;
 			}
         }
     }
+    
+    // Get the minimax move with 2 level depth
+    int score_max = -1000;
+    int score_min = 1000;
+	int score;
+	Move * best_move = NULL;
+    Board *board2 = board->copy();
+    for (unsigned int i = 0; i < valid_move.size(); i++) {
+        board2->doMove(valid_move[i], player_side);
+        score_min = 1000;
+        for (int j = 0; j < 8; j++) {
+			for (int k = 0; k < 8; k++) {
+				Move * move2 = new Move(j, k);
+				if (board2->checkMove(move2, opponent_side)) 
+				{
+					Board *board3 = board2->copy();
+					board3->doMove(move2, opponent_side);
+					score = -board3->getscore(move2, opponent_side);
+					if (score < score_min)
+					{
+						score_min = score;
+					}
+				}
+				else
+				{
+					delete move2;
+				}
+			}
+		}
+		if (score_min > score_max)
+		{
+			score_max = score_min;
+			best_move = valid_move[i];
+		}
+    }
+    
     board->doMove(best_move, player_side); //update the board
+	//board->printboard();
+	//cerr << "here2";
 	return best_move;
-    
-	return NULL;
-	
-    
 }
