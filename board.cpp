@@ -125,15 +125,13 @@ bool Board::checkMove(Move *m, Side side) {
     return false;
 }
 
-/*
- * Modifies the board to reflect the specified move.
- */
+/**
+Updates the board to reflect the specified move. Assumes the move is valid.
+If the move is NULL, do not update the board.
+*/
 void Board::doMove(Move *m, Side side) {
     // A NULL move means pass.
     if (m == NULL) return;
-
-    // Ignore if move is invalid.
-    if (!checkMove(m, side)) return;
 
     int X = m->getX();
     int Y = m->getY();
@@ -169,6 +167,7 @@ void Board::doMove(Move *m, Side side) {
 If the move is legal, returns a new Board where the move has been made.
 The returned Board is dynamically allocated; please free with delete.
 If the move is NOT legal, returns NULL.
+Assumes the move is non-NULL.
 */
 Board *Board::doMoveIfLegal(Move *m, Side side) {
     int X = m->getX();
