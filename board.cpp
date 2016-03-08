@@ -81,60 +81,6 @@ bool Board::onBoard(int x, int y) {
 }
 
 
-/*
- * Returns true if the game is finished; false otherwise. The game is finished
- * if neither side has a legal move.
- */
-bool Board::isDone() {
-    return !(hasMoves(BLACK) || hasMoves(WHITE));
-}
-
-/*
- * Returns true if there are legal moves for the given side.
- */
-bool Board::hasMoves(Side side) {
-    for (int i = 0; i < 8; i++) {
-        for (int j = 0; j < 8; j++) {
-            Move move(i, j);
-            if (checkMove(&move, side)) return true;
-        }
-    }
-    return false;
-}
-
-/*
- * Returns true if a move is legal for the given side; false otherwise.
- */
-bool Board::checkMove(Move *m, Side side) {
-    // Passing is only legal if you have no moves.
-    if (m == NULL) return !hasMoves(side);
-
-    int X = m->getX();
-    int Y = m->getY();
-
-    // Make sure the square hasn't already been taken.
-    if (occupied(X, Y)) return false;
-
-    Side other = (side == BLACK) ? WHITE : BLACK;
-    for (int dx = -1; dx <= 1; dx++) {
-        for (int dy = -1; dy <= 1; dy++) {
-            if (dy == 0 && dx == 0) continue;
-
-            // Is there a capture in that direction?
-            int x = X + dx;
-            int y = Y + dy;
-            if (onBoard(x, y) && get(other, x, y)) {
-                do {
-                    x += dx;
-                    y += dy;
-                } while (onBoard(x, y) && get(other, x, y));
-
-                if (onBoard(x, y) && get(side, x, y)) return true;
-            }
-        }
-    }
-    return false;
-}
 
 /**
 Updates the board to reflect the specified move. Assumes the move is valid.

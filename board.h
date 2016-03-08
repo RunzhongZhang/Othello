@@ -24,16 +24,12 @@ public:
     
     static const int heuristic_values[64];
     
-    bool isDone();
-    bool hasMoves(Side side);
-    bool checkMove(Move *m, Side side);
     void doMove(Move *m, Side side);
     Board *doMoveIfLegal(Move *m, Side side);
     int score(Side side);
     int count(Side side);
     int countBlack();
     int countWhite();
-    int getscore(Move *m, Side side);
     void setBoard(char data[]);
     void printboard();
 };
