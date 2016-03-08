@@ -2,6 +2,7 @@
 #define __PLAYER_H__
 
 #include <iostream>
+#include <stdlib.h>
 #include "common.h"
 #include "board.h"
 using namespace std;

@@ -1,7 +1,4 @@
 #include "player.h"
-#include <vector>
-#include <stdlib.h>
-#include <limits.h>
 
 /*
  * Constructor for the player; initialize everything here. The side your AI is
