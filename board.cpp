@@ -54,14 +54,23 @@ Board *Board::copy() {
     return newBoard;
 }
 
+/**
+Returns whether (x, y) is occupied.
+*/
 bool Board::occupied(int x, int y) {
     return taken[x + 8*y];
 }
 
+/**
+Returns whether (x, y) is occupied by the specified side.
+*/
 bool Board::get(Side side, int x, int y) {
     return occupied(x, y) && (black[x + 8*y] == (side == BLACK));
 }
 
+/**
+Sets position (x, y) to be occupied by the specified side.
+*/
 void Board::set(Side side, int x, int y) {
     taken.set(x + 8*y);
     black.set(x + 8*y, side == BLACK);
@@ -75,7 +84,9 @@ void Board::flip(int x, int y) {
     black.flip(x + 8*y);
 }
 
-
+/**
+Returns whether (x, y) is on the board.
+*/
 bool Board::onBoard(int x, int y) {
     return(0 <= x && x < 8 && 0 <= y && y < 8);
 }
