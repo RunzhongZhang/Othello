@@ -23,7 +23,7 @@ Board::~Board() {
 /**
 Heuristic values for each square in the board.
 */
-const int Board::heuristic_values[64] = 	
+const int Board::heuristic_values[64] =
     {50000,-1500,300,100,100,300,-150, 50000,
 	 -1500,-2500, 0, 0, 0, 0,-2500,-1500,
 	   300,   0, 50, 20, 20, 50,   0,  300,
@@ -69,9 +69,9 @@ bool Board::onBoard(int x, int y) {
     return(0 <= x && x < 8 && 0 <= y && y < 8);
 }
 
- 
+
 /*
- * Returns true if the game is finished; false otherwise. The game is finished 
+ * Returns true if the game is finished; false otherwise. The game is finished
  * if neither side has a legal move.
  */
 bool Board::isDone() {
@@ -166,7 +166,7 @@ void Board::doMove(Move *m, Side side) {
 }
 
 /**
-If the move is legal, returns a new Board where the move has been made. 
+If the move is legal, returns a new Board where the move has been made.
 The returned Board is dynamically allocated; please free with delete.
 If the move is NOT legal, returns NULL.
 */
@@ -176,7 +176,7 @@ Board *Board::doMoveIfLegal(Move *m, Side side) {
 
     // Make sure the square hasn't already been taken.
     if (occupied(X, Y)) return NULL;
-    
+
     Board *newBoard = NULL;
 
     Side other = (side == BLACK) ? WHITE : BLACK;
@@ -194,33 +194,48 @@ Board *Board::doMoveIfLegal(Move *m, Side side) {
                 } while (onBoard(x, y) && get(other, x, y));
 
                 if (onBoard(x, y) && get(side, x, y)) {
-                    /*
-                    All pieces between (x, y), and (m.x, m.y) are flipped.
-                    */
+                    // This is a legal move
+
                     if (newBoard == NULL) {
                         // Initialize newBoard if it hasn't been yet.
                         newBoard = this->copy();
+                        // err << "In doMoveIfLegal: Legal move (x, y) (" << X << ", " << Y << ")" << endl;
                     }
-                    for (int i = X + dx, j = Y + dy; 
-                         i != x; 
+
+                    /*
+                    Flip all pieces between (x, y), and (m.x, m.y).
+                    */
+                    for (int i = X + dx, j = Y + dy;
+                         i != x || j != y;
                          i += dx, j += dy) {
                         newBoard->flip(i, j);
-                    } 
+                        // cerr << "Flip (i, j) " << i << " " << j << endl;
+                    }
                 }
             }
         }
     }
-    
+
+    if (newBoard != NULL) {
+        // Add new piece at (m.x, m.y)
+        newBoard->set(side, X, Y);
+
+        // cerr << "Resulting board:" << endl;
+        // newBoard->printboard();
+    } else {
+        // cerr << "In doMoveIfLegal: Illegal move (x, y) (" << X << ", " << Y << ")" << endl;
+    }
+
     return newBoard;
 }
 
 /**
-Calculates the score, if You are on the specified side. 
-(Squares occupied by the same side as "side" contribute positively; 
+Calculates the score, if You are on the specified side.
+(Squares occupied by the same side as "side" contribute positively;
 those occupied by the opposite side contribute negatively.)
 */
 int Board::score(Side yourSide) {
-    int output;
+    int output = 0;
     for (int i = 0; i < 64; i++) {
         if (taken[i]) {
             if (black[i] == (yourSide == BLACK)) {
@@ -285,7 +300,7 @@ void Board::printboard()
 {
 	for (int j = 0; j < 8; j++) {
         for (int i = 0; i < 8; i++) {
-            if (!this->occupied(i, j)) 
+            if (!this->occupied(i, j))
             {
 				cerr << "0 ";
 			}
