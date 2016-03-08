@@ -197,15 +197,15 @@ Board *Board::doMoveIfLegal(Move *m, Side side) {
 }
 
 /**
-Calculates the score, if You are on the specified side.
+Calculates the score, from the perspective of the specified side.
 (Squares occupied by the same side as "side" contribute positively;
 those occupied by the opposite side contribute negatively.)
 */
-int Board::score(Side yourSide) {
+int Board::score(Side side) {
     int output = 0;
     for (int i = 0; i < 64; i++) {
         if (taken[i]) {
-            if (black[i] == (yourSide == BLACK)) {
+            if (black[i] == (side == BLACK)) {
                 /*
                 if it's occupied by black and you are BLACK or
                 if it's occupied by white and you are WHITE
