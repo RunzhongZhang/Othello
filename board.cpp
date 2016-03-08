@@ -219,6 +219,29 @@ int Board::score(Side side) {
     return output;
 }
 
+
+/**
+ * Simple way to calculate the score, use the formula:
+ * board position score = (# stones you have) - (# stones your opponent has)
+ */ 
+int Board::score_simple(Side side) {
+	int output = 0;
+    for (int i = 0; i < 64; i++) {
+        if (taken[i]) {
+            if (black[i] == (side == BLACK)) {
+                /*
+                if it's occupied by black and you are BLACK or
+                if it's occupied by white and you are WHITE
+                */
+                output += 1;
+            } else {
+                output -= 1;
+            }
+        }
+    }
+    return output;
+}
+
 /*
  * Current count of given side's stones.
  */

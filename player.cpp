@@ -88,7 +88,14 @@ int Player::minimax(Board *board, Side side, int depth, Move *&best_move) {
     
     if (best_move == NULL) { 
         //There were no legal moves
-        return board->score(side);
+        if (this->testingMinimax)
+        {
+			return board->score_simple(side);
+		}
+		else
+		{
+			return board->score(side);
+		}
     }
     
     return best_score;
@@ -115,7 +122,14 @@ Move *Player::doMove(Move *opponentsMove, int msLeft) {
     
     // Find best move, and update our board with it
     Move *best_move;
-    minimax(board, player_side, 5, best_move);
+    if (this->testingMinimax)
+    {
+		minimax(board, player_side, 2, best_move); 
+	}
+	else
+	{
+		minimax(board, player_side, 5, best_move);
+	}
     board->doMove(best_move, player_side);
     
     return best_move;
