@@ -27,7 +27,8 @@ public:
     void doMove(Move *m, Side side);
     Board *doMoveIfLegal(Move *m, Side side);
     int score(Side side);
-    int score_simple(Side side);
+    int score_endgame(Side side);
+    int countAll();
     int count(Side side);
     int countBlack();
     int countWhite();

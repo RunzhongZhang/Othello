@@ -221,10 +221,10 @@ int Board::score(Side side) {
 
 
 /**
- * Simple way to calculate the score, use the formula:
+ * Simply finds the stone differential, used in the endgame
  * board position score = (# stones you have) - (# stones your opponent has)
  */ 
-int Board::score_simple(Side side) {
+int Board::score_endgame(Side side) {
 	int output = 0;
     for (int i = 0; i < 64; i++) {
         if (taken[i]) {
@@ -240,6 +240,13 @@ int Board::score_simple(Side side) {
         }
     }
     return output;
+}
+
+/**
+ * Count total number of stones in the board
+ */
+int Board::countAll() {
+    return taken.count();
 }
 
 /*
