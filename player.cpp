@@ -16,7 +16,7 @@ Player::Player(Side side) {
  * Destructor for the player.
  */
 Player::~Player() {
-}
+} 
 
 /**
 Returns the maximal score of the board, and modifies best_move to contain 
@@ -27,7 +27,8 @@ to-be-optimized player is on the specified side.
 If depth = 0 or there are no legal moves, the board's heuristic score is 
 returned, and best_move is NULL and does NOT need to be deleted.
 */
-int Player::minimax(Board *board, Side side, int depth, Move *&best_move) {
+int Player::minimax(Board *board, Side side, int depth, int lower_bound, 
+        int upper_bound, Move *&best_move) {
     best_move = NULL;
     
     if (depth == 0) {
@@ -51,7 +52,8 @@ int Player::minimax(Board *board, Side side, int depth, Move *&best_move) {
                 // Legal move
                              
                 // Find heuristic score of new_board, using recursive minimax
-                new_score = -minimax(new_board, otherSide, depth - 1, garbage);
+                new_score = -minimax(new_board, otherSide, depth - 1, 
+                        -upper_bound, -lower_bound, garbage);
                 if (garbage != NULL) {
                     delete garbage;
                 }
@@ -76,10 +78,20 @@ int Player::minimax(Board *board, Side side, int depth, Move *&best_move) {
                     // This move wasn't the best so far, delete it
                     delete new_move;
                 }
+
+                // lower_bound = max(lower_bound, new_score)
+                if (new_score > lower_bound) {
+                    lower_bound = new_score;
+                }
+
                 
             } else {
                 // This move wasn't legal, delete it
                 delete new_move;
+            }
+
+            if (lower_bound >= upper_bound) { 
+                return best_score;
             }
             
             delete new_board;
@@ -124,11 +136,11 @@ Move *Player::doMove(Move *opponentsMove, int msLeft) {
     Move *best_move;
     if (this->testingMinimax)
     {
-		minimax(board, player_side, 2, best_move); 
+        minimax(board, player_side, 2, -1000000, +1000000, best_move); 
 	}
 	else
 	{
-		minimax(board, player_side, 5, best_move);
+		minimax(board, player_side, DEPTH, -1000000, +1000000, best_move);
 	}
     board->doMove(best_move, player_side);
     

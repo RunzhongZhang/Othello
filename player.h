@@ -12,9 +12,12 @@ class Player {
 public:
     Player(Side side);
     ~Player();
+
+    static const int DEPTH = 8;
     
     Move *doMove(Move *opponentsMove, int msLeft);
-    int minimax(Board *board, Side side, int depth, Move *&best_move);
+    int minimax(Board *board, Side side, int depth, int lower_bound,
+            int upper_bound, Move *&best_move);
 
     // Flag to tell if the player is running within the test_minimax context
     bool testingMinimax;
