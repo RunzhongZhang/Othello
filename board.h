@@ -24,6 +24,9 @@ public:
     
     static const int heuristic_values[64];
     
+    bool checkMove(Move *m, Side side);
+    bool isDone();
+    bool hasMoves(Side side);
     void doMove(Move *m, Side side);
     Board *doMoveIfLegal(Move *m, Side side);
     int score(Side side);
@@ -34,6 +37,13 @@ public:
     int countWhite();
     void setBoard(char data[]);
     void printboard();
+    int valid_move(Side side);
+    double mobility(Side side);
+    int piece_diff(Side side);
+    int corner_occ(Side side);
+    int corner_close(Side side);
+    int frontier(Side side);
+    int heuristic_value(Side side);
 };
 
 #endif

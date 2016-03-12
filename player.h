@@ -16,7 +16,7 @@ public:
     /*
      * Depth to search before the endgame.
      */
-    static const int DEPTH = 6;
+    static const int DEPTH = 3;
     /*
      * If there are only this many empty spaces on the board,
      * use complete endgame solver.
