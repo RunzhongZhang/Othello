@@ -42,7 +42,7 @@ public:
     int piece_diff(Side side);
     int corner_occ(Side side);
     int corner_close(Side side);
-    int frontier(Side side);
+    double frontier(Side side);
     int heuristic_value(Side side);
 };
 
