@@ -25,14 +25,16 @@ Board::~Board() {
  * https://github.com/kartikkukreja/blog-codes/blob/master/src/Heuristic%20Function%20for%20Reversi%20%28Othello%29.cpp
  */ 
 const int Board::heuristic_values[64] =
-    {50,-5,11, 8, 8,11,-5,50,
-	 -5,-10,-4, 1, 1,-4,-10,-5,
-	 11,-4, 2, 2, 2, 2,-4,11,
-	  8, 1, 2,-3,-3, 2, 1, 8,
-	  8, 1, 2,-3,-3, 2, 1, 8,
-	 11,-4, 2, 2, 2, 2,-4,11,
-	 -5,-10,-4, 1, 1,-4,-10,-5,
-	 50,-5,11, 8, 8,11,-5,50};
+
+    {60,-9,11, 8, 8,11,-9,60,
+    -9, -15,-4, 1, 1,-4,-15,-9,
+    11, -4, 2, 2, 2, 2,-4,11,
+     8,  1, 2,-3,-3, 2, 1, 8,
+     8,  1, 2,-3,-3, 2, 1, 8,
+    11, -4, 2, 2, 2, 2,-4,11,
+    -9,-15,-4, 1, 1,-4,-15,-9,
+    60,-9,11, 8, 8,11,-9,60};
+
 
 
 /*
@@ -193,14 +195,8 @@ Calculates the score, from the perspective of the specified side.
 those occupied by the opposite side contribute negatively.)
 */
 int Board::score(Side side) {
-    int output = 0;
-    
-    //output += 10 * piece_diff(side) + 801 * corner_occ(side) + 382 * corner_close(side) + 79 * mobility(side) + 74 * frontier(side) + 10 * heuristic_value(side);
-	output= heuristic_value(side);
-    
-    return output;
+    return heuristic_value(side) + 0.3 * mobility(side);
 }
-
 
 /**
  * Simply finds the stone differential, used in the endgame
@@ -301,8 +297,6 @@ void Board::printboard()
  * Returns true if a move is legal for the given side; false otherwise.
  */
 bool Board::checkMove(Move *m, Side side) {
-	// Passing is only legal if you have no moves.
-	if (m == NULL) return !hasMoves(side);
 	int X = m->getX();
 	int Y = m->getY();
 	// Make sure the square hasn't already been taken.
@@ -327,27 +321,6 @@ bool Board::checkMove(Move *m, Side side) {
 }
 
 /**
- * Returns true if the game is finished; false otherwise. The game is finished
- * if neither side has a legal move.
- */
-bool Board::isDone() {
-	return !(hasMoves(BLACK) || hasMoves(WHITE));
-}
-
-/**
- * Returns true if there are legal moves for the given side.
- */
-bool Board::hasMoves(Side side) {
-	for (int i = 0; i < 8; i++) {
-		for (int j = 0; j < 8; j++) {
-			Move move(i, j);
-			if (checkMove(&move, side)) return true;
-		}
-	}
-	return false;
-}
-
-/**
  * return the number of valid moves
  */
 int Board::valid_move(Side side)
@@ -363,7 +336,7 @@ int Board::valid_move(Side side)
 			{
 				count += 1;
 			}
-			
+            delete new_move; 
 		}
 	}
 	return count;
@@ -376,6 +349,8 @@ double Board::mobility(Side side)
 {
 	double mobility;
 	Side other = (side == BLACK) ? WHITE : BLACK;
+    if (count(side) == 0) return -100;
+    if (count(other) == 0) return 100;
 	int my_stone = valid_move(side);
 	int opp_stone = valid_move(other);
 	if (my_stone > opp_stone)
@@ -393,142 +368,6 @@ double Board::mobility(Side side)
 	return mobility;
 }
 
-/**
- * return the heuristic variable: piece_diff
- */
-int Board::piece_diff(Side side)
-{
-	int piece_diff;
-	if (side == BLACK)
-	{
-		if (countBlack()>countWhite())
-		{
-			piece_diff = (100.0 * countBlack())/(countBlack()+countWhite());
-		}
-		else if (countBlack()<countWhite());
-		{
-			piece_diff = -(100.0*countWhite())/(countBlack()+countWhite());
-		}
-	}
-	else
-	{
-		if (countBlack()<countWhite())
-		{
-			piece_diff = (100.0 * countWhite())/(countBlack()+countWhite());
-		}
-		else if (countBlack()>countWhite());
-		{
-			piece_diff = -(100.0*countBlack())/(countBlack()+countWhite());
-		}
-	}	
-	return piece_diff;
-}
-
-/**
- * return the heuristic variable: frontier
- */ 
-int Board::frontier(Side side)
-{
-	int my_frontier = 0;
-	int opp_frontier = 0;
-	Side other = (side == BLACK) ? WHITE : BLACK;
-	
-	for (int i = 0; i < 8; i++)
-	{
-		for (int j = 0; j < 8; j++)
-		{
-			if (!occupied(i, j))
-			{
-				if (onBoard(i-1,j-1))
-				{
-					if (get(side,i-1,j-1)) my_frontier++;
-					else if (get(other,i-1,j-1)) opp_frontier++;
-				}
-				if (onBoard(i-1,j))
-				{
-					if (get(side,i-1,j)) my_frontier++;
-					else if (get(other,i-1,j)) opp_frontier++;
-				}
-				if (onBoard(i-1,j+1))
-				{
-					if (get(side,i-1,j+1)) my_frontier++;
-					else if (get(other,i-1,j+1)) opp_frontier++;
-				}
-				if (onBoard(i,j-1))
-				{
-					if (get(side,i,j-1)) my_frontier++;
-					else if (get(other,i,j-1)) opp_frontier++;
-				}
-				if (onBoard(i,j+1))
-				{
-					if (get(side,i,j+1)) my_frontier++;
-					else if (get(other,i,j+1)) opp_frontier++;
-				}
-				if (onBoard(i+1,j-1))
-				{
-					if (get(side,i+1,j-1)) my_frontier++;
-					else if (get(other,i+1,j-1)) opp_frontier++;
-				}
-				if (onBoard(i+1,j))
-				{
-					if (get(side,i+1,j)) my_frontier++;
-					else if (get(other,i+1,j)) opp_frontier++;
-				}
-				if (onBoard(i+1,j+1))
-				{
-					if (get(side,i+1,j+1)) my_frontier++;
-					else if (get(other,i+1,j+1)) opp_frontier++;
-				}
-			}
-		}
-	}
-	if (my_frontier > opp_frontier)
-		return (100.0*my_frontier)/(my_frontier + opp_frontier);
-	else if (my_frontier < opp_frontier)
-		return -(100.0*opp_frontier)/(my_frontier + opp_frontier);
-	else
-		return 0;
-	
-}
-
-/**
- * return the heuristic variable: corner_occupancy
- */
-int Board::corner_occ(Side side)
-{
-	int black_occ = 0;
-	int white_occ = 0;
-	
-	if (get(BLACK,0,0))
-		black_occ++;
-    else if(get(WHITE,0,0))
-		white_occ++;
-		
-	if (get(BLACK,0,7))
-		black_occ++;
-    else if(get(WHITE,0,7))
-		white_occ++;
-		
-	if (get(BLACK,7,0))
-		black_occ++;
-    else if(get(WHITE,7,0))
-		white_occ++;
-		
-	if (get(BLACK,7,7))
-		black_occ++;
-    else if(get(WHITE,7,0))
-		white_occ++;
-		
-	if (side == BLACK)
-		return 25*(black_occ - white_occ);
-	else
-		return 25*(white_occ - black_occ);
-}
-
-/**
- * return the heuristic variable: corner closeness (only if corner is not occupied)
- */ 
- 
 int Board::heuristic_value(Side side)
 {
 	int heuristic_value = 0;
@@ -546,75 +385,4 @@ int Board::heuristic_value(Side side)
         }
     }
     return heuristic_value;
-}
-
-int Board::corner_close(Side side)
-{
-	int my_close = 0;
-	int opp_close = 0;
-	Side other = (side == BLACK) ? WHITE : BLACK;
-	if (!occupied(0,0))
-	{
-		if (get(side, 0, 1)) 
-			my_close++;
-		else if (get(other, 0,1))
-			opp_close++;
-		if (get(side, 1, 1)) 
-			my_close++;
-		else if (get(other, 1,1))
-			opp_close++;
-		if (get(side, 1, 0)) 
-			my_close++;
-		else if (get(other, 1,0))
-			opp_close++;
-	}
-	
-	if (!occupied(0,7))
-	{
-		if (get(side, 0, 6)) 
-			my_close++;
-		else if (get(other, 0,6))
-			opp_close++;
-		if (get(side, 1, 6)) 
-			my_close++;
-		else if (get(other, 1,6))
-			opp_close++;
-		if (get(side, 1, 7)) 
-			my_close++;
-		else if (get(other, 1,7))
-			opp_close++;
-	}
-	
-	if (!occupied(7,0))
-	{
-		if (get(side, 7, 1)) 
-			my_close++;
-		else if (get(other, 7,1))
-			opp_close++;
-		if (get(side, 6, 1)) 
-			my_close++;
-		else if (get(other, 6,1))
-			opp_close++;
-		if (get(side, 6, 0)) 
-			my_close++;
-		else if (get(other, 6,0))
-			opp_close++;
-	}
-	
-	if (!occupied(7,7))
-	{
-		if (get(side, 6, 7)) 
-			my_close++;
-		else if (get(other, 6,7))
-			opp_close++;
-		if (get(side, 6, 6)) 
-			my_close++;
-		else if (get(other, 6,6))
-			opp_close++;
-		if (get(side, 7, 6)) 
-			my_close++;
-		else if (get(other, 7,6))
-			opp_close++;
-	}
-	return -12.5 * (my_close - opp_close);
 }

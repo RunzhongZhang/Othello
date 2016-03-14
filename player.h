@@ -21,7 +21,7 @@ public:
      * If there are only this many empty spaces on the board,
      * use complete endgame solver.
      */
-    static const int DEPTH_ENDGAME = 10;
+    static const int DEPTH_ENDGAME = 16;
     
     Move *doMove(Move *opponentsMove, int msLeft);
     int minimax(Board *board, Side side, int depth, int lower_bound,

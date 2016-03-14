@@ -213,6 +213,6 @@ Move *Player::doMove(Move *opponentsMove, int msLeft) {
         minimax(board, player_side, DEPTH, -1000000, +1000000, best_move); 
     }
     board->doMove(best_move, player_side);
-    
+
     return best_move;
 }
