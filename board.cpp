@@ -25,14 +25,14 @@ Board::~Board() {
  * https://github.com/kartikkukreja/blog-codes/blob/master/src/Heuristic%20Function%20for%20Reversi%20%28Othello%29.cpp
  */ 
 const int Board::heuristic_values[64] =
-    {20,-3,11, 8, 8,11,-3,20,
-	 -3,-7,-4, 1, 1,-4,-7,-3,
+    {50,-5,11, 8, 8,11,-5,50,
+	 -5,-10,-4, 1, 1,-4,-10,-5,
 	 11,-4, 2, 2, 2, 2,-4,11,
 	  8, 1, 2,-3,-3, 2, 1, 8,
 	  8, 1, 2,-3,-3, 2, 1, 8,
 	 11,-4, 2, 2, 2, 2,-4,11,
-	 -3,-7,-4, 1, 1,-4,-7,-3,
-	 20,-3,11, 8, 8,11,-3,20};
+	 -5,-10,-4, 1, 1,-4,-10,-5,
+	 50,-5,11, 8, 8,11,-5,50};
 
 
 /*
@@ -195,8 +195,8 @@ those occupied by the opposite side contribute negatively.)
 int Board::score(Side side) {
     int output = 0;
     
-    output += 10 * piece_diff(side) + 801 * corner_occ(side) + 382 * corner_close(side) + 79 * mobility(side) + 74 * frontier(side) + 10 * heuristic_value(side);
-
+    //output += 10 * piece_diff(side) + 801 * corner_occ(side) + 382 * corner_close(side) + 79 * mobility(side) + 74 * frontier(side) + 10 * heuristic_value(side);
+	output= heuristic_value(side);
     
     return output;
 }
