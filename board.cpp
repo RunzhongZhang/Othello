@@ -195,7 +195,7 @@ Calculates the score, from the perspective of the specified side.
 those occupied by the opposite side contribute negatively.)
 */
 int Board::score(Side side) {
-    return heuristic_value(side) + 0.3 * mobility(side);
+    return heuristic_value(side) + 0.2 * mobility(side);
 }
 
 /**
